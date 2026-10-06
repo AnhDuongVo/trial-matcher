@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "trial-matcher: clinical trial pre-screening from FHIR records"
+authors:
+  - family-names: "Vo"
+    given-names: "Anh Duong"
+license: Apache-2.0
+version: 0.2.0
+date-released: "2026-10-06"

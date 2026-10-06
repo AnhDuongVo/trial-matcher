@@ -1,0 +1,6 @@
+{"patient": "patients/p1.json", "trial": "trials/SYN-T2D-001.json", "as_of": "2026-10-01", "verdict": "eligible", "criteria": ["met", "met", "met", "met", "met", "not_met", "not_met", "not_met", "not_met", "not_met"]}
+{"patient": "patients/p1.json", "trial": "trials/SYN-CKD-002.json", "as_of": "2026-10-01", "verdict": "ineligible", "criteria": ["met", "met", "not_met", "not_met", "not_met", "not_met", "not_met"]}
+{"patient": "patients/p2.json", "trial": "trials/SYN-T2D-001.json", "as_of": "2026-10-01", "verdict": "ineligible", "criteria": ["met", "met", "not_met", "not_met", "met", "not_met", "met", "not_met", "met", "unknown"]}
+{"patient": "patients/p2.json", "trial": "trials/SYN-CKD-002.json", "as_of": "2026-10-01", "verdict": "eligible", "criteria": ["met", "met", "met", "met", "not_met", "not_met", "not_met"]}
+{"patient": "patients/p3.json", "trial": "trials/SYN-T2D-001.json", "as_of": "2026-10-01", "verdict": "ineligible", "criteria": ["met", "met", "unknown", "not_met", "met", "not_met", "not_met", "met", "not_met", "not_met"]}
+{"patient": "patients/p3.json", "trial": "trials/SYN-CKD-002.json", "as_of": "2026-10-01", "verdict": "needs_review", "criteria": ["met", "met", "met", "unknown", "not_met", "not_met", "not_met"]}

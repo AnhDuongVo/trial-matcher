@@ -1,0 +1,14 @@
+# nat run --config_file configs/workflow.yml --input "src/trial_matcher/samples/patients/p1.json | src/trial_matcher/samples/trials/SYN-T2D-001.json | 2026-10-01"
+# nat mcp serve --config_file configs/workflow.yml   # expose pre-screening as an MCP tool
+llms:
+  fast_llm:
+    _type: nim
+    model_name: nvidia/nemotron-3.5-lightning-30b-a3b
+    temperature: 0.0
+    max_tokens: 2048
+    chat_template_kwargs:
+      enable_thinking: false
+
+workflow:
+  _type: trial_prescreen
+  llm_name: fast_llm

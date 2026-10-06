@@ -1,0 +1,17 @@
+{
+  "protocolSection": {
+    "identificationModule": {
+      "nctId": "SYN-T2D-001",
+      "briefTitle": "Once-weekly study drug added to metformin in adults with type 2 diabetes (synthetic)"
+    },
+    "statusModule": {
+      "overallStatus": "RECRUITING"
+    },
+    "eligibilityModule": {
+      "eligibilityCriteria": "Inclusion Criteria:\n\n* Adults aged 18 to 75 years\n* Diagnosis of type 2 diabetes for at least 6 months\n* HbA1c between 7.5% and 10.5% at screening\n* Stable dose of metformin of at least 1500 mg per day for at least 3 months\n* Body mass index 25 to 40 kg/m2\n\nExclusion Criteria:\n\n* Type 1 diabetes\n* eGFR below 45 mL/min/1.73 m2\n* Myocardial infarction, stroke or hospitalisation for heart failure within 6 months before screening\n* Current treatment with insulin\n* Pregnancy or breastfeeding",
+      "minimumAge": "18 Years",
+      "sex": "ALL",
+      "maximumAge": "75 Years"
+    }
+  }
+}

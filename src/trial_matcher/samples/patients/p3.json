@@ -1,0 +1,315 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:p3",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p3",
+        "gender": "male",
+        "birthDate": "1959-01-20",
+        "name": [
+          {
+            "text": "Synthetic patient p3"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-c1",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "p3-c1",
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "active"
+            }
+          ],
+          "text": "active"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "44054006",
+              "display": "Diabetes mellitus type 2 (disorder)"
+            }
+          ],
+          "text": "Diabetes mellitus type 2 (disorder)"
+        },
+        "onsetDateTime": "2005-04-04"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-c2",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "p3-c2",
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "resolved",
+              "display": "resolved"
+            }
+          ],
+          "text": "resolved"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "22298006",
+              "display": "Myocardial infarction (disorder)"
+            }
+          ],
+          "text": "Myocardial infarction (disorder)"
+        },
+        "onsetDateTime": "2026-07-15",
+        "abatementDateTime": "2026-07-30"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-c3",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "p3-c3",
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "active"
+            }
+          ],
+          "text": "active"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "84114007",
+              "display": "Heart failure (disorder)"
+            }
+          ],
+          "text": "Heart failure (disorder)"
+        },
+        "onsetDateTime": "2026-07-16"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-c4",
+      "resource": {
+        "resourceType": "Condition",
+        "id": "p3-c4",
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active",
+              "display": "active"
+            }
+          ],
+          "text": "active"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "55822004",
+              "display": "Hyperlipidemia (disorder)"
+            }
+          ],
+          "text": "Hyperlipidemia (disorder)"
+        },
+        "onsetDateTime": "2010-01-01"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-o1",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "p3-o1",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "laboratory"
+              }
+            ],
+            "text": "laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "4548-4",
+              "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+            }
+          ],
+          "text": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        },
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "effectiveDateTime": "2025-01-10",
+        "valueQuantity": {
+          "value": 9.1,
+          "unit": "%"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-o2",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "p3-o2",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory",
+                "display": "laboratory"
+              }
+            ],
+            "text": "laboratory"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "33914-3",
+              "display": "Glomerular filtration rate/1.73 sq M.predicted"
+            }
+          ],
+          "text": "Glomerular filtration rate/1.73 sq M.predicted"
+        },
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "effectiveDateTime": "2026-07-20",
+        "valueQuantity": {
+          "value": 58,
+          "unit": "mL/min/{1.73_m2}"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-o3",
+      "resource": {
+        "resourceType": "Observation",
+        "id": "p3-o3",
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "vital-signs"
+              }
+            ],
+            "text": "vital-signs"
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "39156-5",
+              "display": "Body mass index (BMI) [Ratio]"
+            }
+          ],
+          "text": "Body mass index (BMI) [Ratio]"
+        },
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "effectiveDateTime": "2026-07-20",
+        "valueQuantity": {
+          "value": 27.0,
+          "unit": "kg/m2"
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-m1",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "p3-m1",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "861004",
+              "display": "Metformin hydrochloride 500 MG Oral Tablet"
+            }
+          ],
+          "text": "Metformin hydrochloride 500 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "authoredOn": "2018-03-01",
+        "dosageInstruction": [
+          {
+            "text": "500 mg twice daily"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:p3-m2",
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "p3-m2",
+        "status": "active",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+              "code": "617311",
+              "display": "Atorvastatin 40 MG Oral Tablet"
+            }
+          ],
+          "text": "Atorvastatin 40 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "Patient/p3"
+        },
+        "authoredOn": "2010-01-01",
+        "dosageInstruction": [
+          {
+            "text": "40 mg once daily"
+          }
+        ]
+      }
+    }
+  ]
+}

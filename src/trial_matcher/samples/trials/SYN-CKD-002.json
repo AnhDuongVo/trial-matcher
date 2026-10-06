@@ -1,0 +1,16 @@
+{
+  "protocolSection": {
+    "identificationModule": {
+      "nctId": "SYN-CKD-002",
+      "briefTitle": "Kidney outcomes in adults with type 2 diabetes and chronic kidney disease (synthetic)"
+    },
+    "statusModule": {
+      "overallStatus": "RECRUITING"
+    },
+    "eligibilityModule": {
+      "eligibilityCriteria": "Inclusion Criteria:\n\n* Age 40 years or older\n* Type 2 diabetes mellitus\n* eGFR between 25 and 60 mL/min/1.73 m2\n* Urine albumin-to-creatinine ratio of at least 200 mg/g\n\nExclusion Criteria:\n\n* Kidney transplant\n* Current dialysis\n* Type 1 diabetes",
+      "minimumAge": "40 Years",
+      "sex": "ALL"
+    }
+  }
+}
