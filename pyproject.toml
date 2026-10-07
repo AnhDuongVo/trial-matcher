@@ -9,7 +9,7 @@ description = "Clinical trial pre-screening from a FHIR record: a status per eli
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Anh Duong Vo" }]
+authors = [{ name = "Maria (Anh Duong Vo)" }]
 keywords = ["clinical-trials", "eligibility", "fhir", "llm", "agents", "nemotron"]
 classifiers = [
   "Programming Language :: Python :: 3",
