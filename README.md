@@ -18,6 +18,12 @@ flowchart LR
     V --> Agg[Conservative verdict] --> H{{Coordinator review<br/>override any criterion}} --> RS[FHIR ResearchSubject]
 ```
 
+## Demo
+
+![trial-matcher demo](docs/demo.gif)
+
+Two patients in the interactive demo. For the first, the eGFR criterion is unknown until a value is added, and lowering HbA1c flips that criterion to not met. For the second, two criteria start as not met and are resolved by editing the record. The video is on [anhduongvo.github.io](https://anhduongvo.github.io/projects/clinical-agentic-ai/).
+
 ## Design decisions
 
 | Decision | Reason |
