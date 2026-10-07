@@ -22,7 +22,7 @@ flowchart LR
 
 | Decision | Reason |
 | --- | --- |
-| Numbers are checked by code, never by the LLM | Lab thresholds and age are where a model error is most dangerous and easiest to avoid |
+| Numbers are checked by code, not by the LLM | Lab thresholds and age are where a model error is most dangerous and easiest to avoid |
 | Labs older than 12 months give "unknown" | Trials need values at screening; an old HbA1c should trigger a new test, not a guess |
 | Unit mismatches go to the model or a human | mmol/mol versus % for HbA1c is a classic silent error |
 | "Not found in the record" is capped at 0.6 confidence | Absence of evidence is not evidence of absence, especially in fragmented records |
@@ -128,6 +128,8 @@ src/trial_matcher/
 scripts/             sample generator, Synthea download
 tests/               offline tests
 ```
+
+> **Design note.** The small OpenAI-compatible client (`llm.py`) and settings (`config.py`) are intentionally vendored rather than shared as a package, so each example is self-contained and runs with a single `pip install`. The same module appears in the sibling projects by design.
 
 ## Development
 
