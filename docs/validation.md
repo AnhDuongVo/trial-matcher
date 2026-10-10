@@ -37,3 +37,7 @@ The scripted parser and assessor were run on three synthetic patients against SY
 | Live model / clinical calibration | Not run |
 
 Two legacy verdicts now become `needs_review`: unsupported dose/duration and compound criteria abstain instead of relying on model arithmetic. This loss of agreement is reported, not hidden by changing the labels. “Unknown” precision is 18.2% against those legacy labels. Scripted qualitative assessments limit the usefulness of the other metrics. Calibration output describes this fixture and does not validate confidence probabilities. [Results, errors, class metrics and confusion table](offline-evaluation.json).
+
+## Re-review follow-up, 10 October 2026
+
+Regression coverage now includes ordinary age/laboratory comparative phrases and true compound clauses; 31 tests passed locally.

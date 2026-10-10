@@ -14,6 +14,19 @@ from .schemas import Assessment, Criterion, Fact, PatientFacts
 
 _COMPOUND = re.compile(r"\b(or|and|unless|either|except|if)\b", re.I)
 
+
+def _has_compound_logic(text: str) -> bool:
+    # Remove only numeric comparative idioms; retain other logical clauses.
+    text = re.sub(r"\bbetween\s+[-+]?\d+(?:\.\d+)?%?\s+and\s+[-+]?\d+(?:\.\d+)?", " ", text, flags=re.I)
+    text = re.sub(
+        r"(?<=\d)\s*(?:years?\s*)?or\s+(?:older|younger|higher|lower|more|less|above|below)\b",
+        " ",
+        text,
+        flags=re.I,
+    )
+    return bool(_COMPOUND.search(text))
+
+
 LAB_ALIASES = {
     "hba1c": ["4548-4", "17856-6", "hemoglobin a1c", "a1c", "glycated"],
     "egfr": ["33914-3", "62238-1", "98979-8", "48642-3", "48643-1", "glomerular filtration"],
@@ -91,9 +104,7 @@ def apply_rules(crit: Criterion, pf: PatientFacts, max_lab_age_days: int = 365) 
             method="rule",
         )
 
-    if _COMPOUND.search(re.sub(r"between\s+\S+\s+and\s+\S+", " ", crit.text, flags=re.I)) and (
-        crit.category in {"age", "lab"} or crit.value is not None
-    ):
+    if _has_compound_logic(crit.text) and (crit.category in {"age", "lab"} or crit.value is not None):
         return result(
             "unknown", 0.0, [], "Compound quantitative criterion requires explicit rule decomposition and review"
         )
@@ -131,8 +142,8 @@ def apply_rules(crit: Criterion, pf: PatientFacts, max_lab_age_days: int = 365) 
             or (crit.value_high is not None and not math.isfinite(crit.value_high))
         ):
             return result("unknown", 0.0, [], "Unparsed quantitative threshold requires review")
-        # Compound logic ("creatinine > 1.5 or eGFR < 30") goes to the LLM; "between x and y" is fine.
-        if _COMPOUND.search(re.sub(r"between\s+\S+\s+and\s+\S+", " ", crit.text, flags=re.I)):
+        # Compound quantitative logic requires explicit decomposition and human review.
+        if _has_compound_logic(crit.text):
             return result("unknown", 0.0, [], "Compound lab criterion requires review")
         fact = find_lab(pf, crit)
         if fact is None or fact.value is None:

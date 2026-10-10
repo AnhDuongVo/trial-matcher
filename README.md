@@ -67,7 +67,7 @@ flowchart LR
 
 ![trial-matcher demo](docs/demo.gif)
 
-Two patients in the interactive demo. For the first, the eGFR criterion is unknown until a value is added, and lowering HbA1c flips that criterion to not met. For the second, two criteria start as not met and are resolved by editing the record. The video is on [anhduongvo.github.io](https://anhduongvo.github.io/projects/clinical-agentic-ai/).
+The edited walkthrough shows one synthetic patient: eGFR stays unknown until a value is supplied, then the simple threshold is met. This is a simplified scalar illustration rather than FHIR or model execution. The video is on [anhduongvo.github.io](https://anhduongvo.github.io/projects/clinical-agentic-ai/).
 
 ## Design decisions
 
@@ -118,7 +118,7 @@ Outputs in `runs/latest/`: `report.md` (a table per criterion), `result.json`, `
 2. **Parsing.** Criteria text is split into single criteria (handling "Key Inclusion Criteria" headings and
    nested "one of the following" lists). A fast model turns each into a category, threshold, unit and synonyms.
 3. **Rules.** Age, sex, simple lab thresholds (with unit and recency checks) and pregnancy criteria for male patients are decided in code.
-   Compound lab criteria ("A or B") go to the model.
+   Ordinary comparisons ("18 or older", "45 or higher") use the parsed threshold. Compound quantitative criteria ("A or B") remain unknown for explicit decomposition and review.
 4. **Model.** Everything else is assessed by the model against the cited facts, in parallel, with guided JSON.
 5. **Aggregation.** A conservative verdict: `eligible`, `ineligible` or `needs_review`.
 
@@ -195,7 +195,7 @@ pytest
 - A research prototype, not a medical device. A coordinator and investigator confirm eligibility.
 - Synthetic data only in this repository.
 - Complex criterion logic can still need a human; trials with more than 60 criteria are truncated and flagged.
-- Unit conversion is not implemented; mismatches go to the model or a reviewer.
+- Unit conversion is not implemented; missing or incompatible units return unknown for explicit conversion and review.
 
 ## Licence
 

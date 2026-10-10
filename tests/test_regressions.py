@@ -94,3 +94,43 @@ def test_corrected_record_and_tied_conflict():
 
 def test_bad_calendar_date_is_unknown():
     assert to_date("2026-02-30") is None
+
+
+@pytest.mark.parametrize(
+    "text,age,status",
+    [
+        ("Age 18 or older", 18, "met"),
+        ("Age 18 years or older", 17, "not_met"),
+        ("Age 65 or younger", 66, "not_met"),
+        ("Age 18 or older and HbA1c > 7", 40, "unknown"),
+        ("Age 18 or eGFR > 45", 40, "unknown"),
+        ("Age 18 or older unless pregnant", 40, "unknown"),
+    ],
+)
+def test_age_comparatives_and_compound_clauses(text, age, status):
+    crit = Criterion(
+        index=0,
+        kind="inclusion",
+        category="age",
+        text=text,
+        age_min=18 if "younger" not in text else None,
+        age_max=65 if "younger" in text else None,
+    )
+    assert apply_rules(crit, patient().model_copy(update={"age_years": age})).status == status
+
+
+@pytest.mark.parametrize(
+    "text,value,status",
+    [
+        ("eGFR 45 or higher", 45, "met"),
+        ("eGFR 45 or higher", 44, "not_met"),
+        ("eGFR 45 or higher or creatinine < 1.5", 50, "unknown"),
+        ("eGFR 45 or higher if treated", 50, "unknown"),
+    ],
+)
+def test_lab_comparatives_and_compound_clauses(text, value, status):
+    crit = C.model_copy(
+        update={"text": text, "lab_name": "eGFR", "loinc": "33914-3", "value": 45, "unit": "mL/min/1.73m2"}
+    )
+    pf = patient(code="33914-3", text="eGFR", value=value, unit="mL/min/1.73m2")
+    assert apply_rules(crit, pf).status == status
