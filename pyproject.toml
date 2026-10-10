@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "trial-matcher"
 version = "0.2.0"
-description = "Clinical trial pre-screening from a FHIR record: a status per eligibility criterion with evidence and calibrated confidence, reviewed by a coordinator."
+description = "Clinical trial pre-screening from a FHIR record: a status per eligibility criterion with evidence and heuristic confidence, reviewed by a coordinator."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "Apache-2.0" }

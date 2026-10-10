@@ -1,0 +1,79 @@
+{
+  "pairs": 3,
+  "criteria": 30,
+  "criterion_accuracy": 0.7,
+  "accuracy_when_decided": 1.0,
+  "coverage_decided": 0.633,
+  "per_class": {
+    "met": {
+      "precision": 1.0,
+      "recall": 0.643,
+      "f1": 0.783,
+      "support": 14
+    },
+    "not_met": {
+      "precision": 1.0,
+      "recall": 0.714,
+      "f1": 0.833,
+      "support": 14
+    },
+    "unknown": {
+      "precision": 0.182,
+      "recall": 1.0,
+      "f1": 0.308,
+      "support": 2
+    },
+    "macro_f1": 0.641
+  },
+  "by_method": {
+    "rule": {
+      "n": 23,
+      "accuracy": 0.609
+    },
+    "llm": {
+      "n": 7,
+      "accuracy": 1.0
+    }
+  },
+  "verdict_accuracy": 0.333,
+  "verdict_confusion": {
+    "eligible->needs_review": 1,
+    "ineligible->ineligible": 1,
+    "ineligible->needs_review": 1
+  },
+  "calibration": {
+    "ece": 0.114,
+    "bins": [
+      {
+        "bin": "0.0-0.5",
+        "n": 9,
+        "mean_conf": 0.0,
+        "accuracy": 0.0
+      },
+      {
+        "bin": "0.5-0.7",
+        "n": 6,
+        "mean_conf": 0.583,
+        "accuracy": 1.0
+      },
+      {
+        "bin": "0.7-0.9",
+        "n": 1,
+        "mean_conf": 0.7,
+        "accuracy": 1.0
+      },
+      {
+        "bin": "0.9-1.0",
+        "n": 14,
+        "mean_conf": 0.955,
+        "accuracy": 1.0
+      }
+    ]
+  },
+  "errors": [],
+  "wall_time_ms": 21.103,
+  "dataset": "Three bundled synthetic patients \u00d7 SYN-T2D-001, 30 criteria; legacy labels retained",
+  "models": "scripted parse and qualitative assessment; no live model",
+  "hardware": "arm64 CPU, Darwin, Python 3.12.14",
+  "limits": "Stricter rules abstain on dose/duration/compound criteria. Two legacy ineligible/eligible verdicts now require review. These are not clinically calibrated probabilities."
+}

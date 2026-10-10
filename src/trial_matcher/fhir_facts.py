@@ -31,7 +31,10 @@ def to_date(value: str | None) -> date | None:
     m = re.match(r"(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?", value)
     if not m:
         return None
-    return date(int(m.group(1)), int(m.group(2) or 1), int(m.group(3) or 1))
+    try:
+        return date(int(m.group(1)), int(m.group(2) or 1), int(m.group(3) or 1))
+    except ValueError:
+        return None
 
 
 # Synthea records social determinants as conditions; they are noise for eligibility.
@@ -132,12 +135,27 @@ def extract_facts(bundle: dict[str, Any], as_of: date | None = None, keep_findin
                 end_date=_date(r.get("abatementDateTime")),
             )
         elif rtype == "Observation":
+            if r.get("status") in {"entered-in-error", "cancelled", "preliminary", "registered", "unknown"}:
+                continue
             text, system, code = _coding(r.get("code"))
             key = f"{system}|{code or text}"
-            when = _date(r.get("effectiveDateTime") or r.get("issued")) or ""
+            when = r.get("effectiveDateTime") or r.get("issued") or ""
+            if when and to_date(when) is None:
+                continue
             obs_counts[key] = obs_counts.get(key, 0) + 1
             if key not in latest_obs or when > latest_obs[key][0]:
                 latest_obs[key] = (when, r)
+            elif when == latest_obs[key][0]:
+                prior = latest_obs[key][1]
+                if r.get("status") in {"corrected", "amended"} and prior.get("status") not in {"corrected", "amended"}:
+                    latest_obs[key] = (when, r)
+                elif (
+                    prior.get("status") not in {"corrected", "amended"} or r.get("status") in {"corrected", "amended"}
+                ) and (r.get("valueQuantity"), r.get("component")) != (
+                    prior.get("valueQuantity"),
+                    prior.get("component"),
+                ):
+                    latest_obs[key] = (when, {**r, "status": "conflicting"})
         elif rtype in {"MedicationRequest", "MedicationStatement"}:
             concept = r.get("medicationCodeableConcept")
             if not concept and r.get("medicationReference"):

@@ -143,16 +143,16 @@ def test_rules():
     )
     assert apply_rules(egfr, pf3).status == "not_met"  # 58 is not below 45
     wrong_unit = egfr.model_copy(update={"unit": "mL/s"})
-    assert apply_rules(wrong_unit, pf3) is None  # unit mismatch goes to the LLM
+    assert apply_rules(wrong_unit, pf3).status == "unknown"  # unit mismatch requires review
     preg = Criterion(index=9, kind="exclusion", text="Pregnancy", category="pregnancy")
     assert apply_rules(preg, pf3).status == "not_met"
     test = Criterion(index=1, kind="inclusion", text="Negative pregnancy test in women", category="pregnancy")
     assert apply_rules(test, pf3).status == "met"  # not applicable to a male patient
     compound = egfr.model_copy(update={"text": "Creatinine > 1.5 mg/dL or eGFR below 45"})
-    assert apply_rules(compound, pf3) is None  # compound logic goes to the LLM
+    assert apply_rules(compound, pf3).status == "unknown"  # compound logic requires review
     mmol = lab.model_copy(update={"unit": "mmol/mol"})
     pf1 = extract_facts(load_bundle(S / "patients" / "p1.json"), AS_OF)
-    assert apply_rules(mmol, pf1) is None  # HbA1c recorded in %, criterion in mmol/mol
+    assert apply_rules(mmol, pf1).status == "unknown"  # HbA1c recorded in %, criterion in mmol/mol
 
 
 def test_aggregate_is_conservative():
@@ -170,8 +170,10 @@ async def test_match_p1_and_fhir_output():
     trial = load_trial(str(S / "trials" / "SYN-T2D-001.json"))
     assert len(criteria_list(trial)[0]) == 10
     result, fhir = await match(pf, trial, fake_llm())
-    assert result.verdict == "eligible"
-    assert [a.method for a in result.assessments][:3] == ["rule", "llm", "rule"]
+    assert result.verdict == "needs_review"
+    # Dose/duration and compound time-window criteria now abstain instead of using model arithmetic.
+    assert {a.index for a in result.assessments if a.status == "unknown"} == {1, 3, 7}
+    assert [a.method for a in result.assessments][:3] == ["rule", "rule", "rule"]
     assert result.assessments[2].evidence_refs == ["Observation/p1-o2"]  # the latest HbA1c, cited by reference
     Bundle.model_validate(fhir)
     ResearchStudy.model_validate(fhir["entry"][0]["resource"])  # nested resources are not validated by Bundle
@@ -201,8 +203,8 @@ async def test_evaluate_on_bundled_labels(tmp_path):
     labels.write_text("\n".join(lines))
     summary = await evaluate(fake_llm(), labels, base_dir=S, out_dir=tmp_path / "out")
     assert summary["pairs"] == 3 and summary["criteria"] == 30
-    assert summary["criterion_accuracy"] >= 0.8
-    assert summary["verdict_accuracy"] == 1.0
+    assert summary["criterion_accuracy"] == 0.7  # disagreement with legacy non-abstaining labels is reported
+    assert summary["verdict_accuracy"] == 0.333  # two legacy verdicts now require quantitative review
     assert "ece" in summary["calibration"]
 
 

@@ -1,8 +1,51 @@
 # trial-matcher
 
+## What this project demonstrates
+
+Demonstrates FHIR trial pre-screening, deterministic simple rules and explicit abstention. Confidence scores are uncalibrated heuristics.
+
+## Watch the demo
+
+![Demo](docs/demo.gif)
+
+[Portfolio videos](https://anhduongvo.github.io/projects/clinical-agentic-ai/). Clinical recordings use the separate simplified interactive demo.
+
+## Try it offline
+
+Python 3.11–3.13. In a fresh virtual environment, from this repository:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+pytest -q
+```
+
+## Run with NVIDIA or another configured backend
+
+Model generation needs `NVIDIA_API_KEY`, `NIM_BASE_URL`, `CTM_MODEL_FAST` and `CTM_MODEL_REASONING`. Check available IDs with `ctm models`. `ctm demo` requires an endpoint. A coordinator must review unknowns and proposed screening decisions.
+
+Model IDs in `.env.example` and NAT configs are examples, not a current availability guarantee. Check your endpoint before running; the validation below does not include live model execution.
+
+## What is verified
+
+Simple parsed age/sex/lab criteria, compatible units, valid dates and a protocol-specific `max_age_days` when supplied. The 365-day fallback is a demo assumption, not a universal trial rule. Unsupported quantitative criteria stay unknown; parsing and qualitative assessments remain probabilistic.
+
+| Validation layer | Status |
+|---|---|
+| Unit/regression tests | Executed locally on Python 3.12; see `docs/validation.md` |
+| Mocked/simulated integrations | Executed locally; scope documented in tests |
+| Live hosted endpoints | Not executed; access and appropriate inputs required |
+| Self-hosted GPU endpoints | Not executed |
+| Domain-specific validation | Not completed; synthetic examples only |
+
+See [validation details](docs/validation.md). The architecture and detailed workflows follow.
+
+## Architecture and detailed workflows
+
 **Clinical trial pre-screening from a patient's FHIR record.** A FHIR R4 bundle and a ClinicalTrials.gov
 study go in. Out comes a status for every eligibility criterion (met, not met, unknown) with the FHIR
-resources it rests on, a calibrated confidence, a conservative overall verdict, and a FHIR `ResearchSubject`
+resources it rests on, a heuristic confidence, a conservative overall verdict, and a FHIR `ResearchSubject`
 that stays `candidate` until a study coordinator has reviewed it.
 
 ```mermaid
@@ -12,7 +55,9 @@ flowchart LR
     F --> R
     P --> R{Rule applies?}
     R -->|age, sex, labs with units and recency| Code[Deterministic rule]
-    R -->|semantics, time windows| LLM[LLM assessment<br/>in parallel]
+    R -->|qualitative semantics| LLM[LLM assessment<br/>in parallel]
+    R -->|unsupported quantitative criterion| Unknown[Unknown: review required]
+    Unknown --> V
     Code --> V[Per-criterion status<br/>+ evidence + confidence]
     LLM --> V
     V --> Agg[Conservative verdict] --> H{{Coordinator review<br/>override any criterion}} --> RS[FHIR ResearchSubject]
@@ -29,8 +74,8 @@ Two patients in the interactive demo. For the first, the eGFR criterion is unkno
 | Decision | Reason |
 | --- | --- |
 | Numbers are checked by code, not by the LLM | Lab thresholds and age are where a model error is most dangerous and easiest to avoid |
-| Labs older than 12 months give "unknown" | Trials need values at screening; an old HbA1c should trigger a new test, not a guess |
-| Unit mismatches go to the model or a human | mmol/mol versus % for HbA1c is a classic silent error |
+| Protocol window, with a 365-day demo fallback | Configure `max_age_days` from the protocol; unknown or stale values require review |
+| Missing/mismatched units return unknown | No implicit model conversion or arithmetic |
 | "Not found in the record" is capped at 0.6 confidence | Absence of evidence is not evidence of absence, especially in fragmented records |
 | "Eligible" needs every inclusion met and every exclusion not met | Borderline patients go to a human rather than being dropped or enrolled |
 | Every decision cites FHIR references | Auditable: a coordinator can go from the decision to the resource |

@@ -12,6 +12,7 @@ For every criterion return: index (as given), kind (as given), text (as given), 
 - sex: female | male | all (for sex criteria)
 - for lab criteria: lab_name, loinc (if you are sure of the LOINC code), comparator (<, <=, >, >=, between),
   value, value_high (for between), unit exactly as written in the criterion
+- max_age_days: measurement recency window in days only if explicitly specified by the protocol; otherwise null
 - terms: 2 to 6 synonyms, abbreviations or codes that help find evidence in a record
 
 Criteria:
@@ -27,7 +28,7 @@ Rules:
 - Time windows ("within 6 months", "for at least 3 months") are relative to the screening date {as_of}.
 - Absence of a diagnosis in the record is weak evidence. If you answer "not_met" only because nothing was
   found, use confidence 0.6 or lower.
-- Cite the fact ids you used in `evidence`. Confidence is your probability that the status is correct.
+- Cite the fact ids you used in `evidence`. Confidence is an uncalibrated self-assessment score, not a measured probability.
 
 Screening date: {as_of}
 Patient: age {age}, sex {sex}

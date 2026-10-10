@@ -5,7 +5,8 @@
       -> decide (conservative verdict) -> [coordinator review interrupt] -> finalize (FHIR ResearchSubject)
 
 Design choices:
-* Numbers are compared by code, never by the LLM; the LLM handles semantics and time windows.
+* Parsed numerical rules are compared by code; unsupported quantitative criteria remain unknown.
+* Criterion parsing and qualitative assessments are probabilistic; confidence scores are uncalibrated.
 * "Absence of evidence" is not evidence: a not_met that rests only on nothing being found is capped at 0.6.
 * The verdict is conservative: "eligible" needs every inclusion met and every exclusion not met.
 * A coordinator can override any criterion; overrides are recorded with name and time.

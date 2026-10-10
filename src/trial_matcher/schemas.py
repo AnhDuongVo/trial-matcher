@@ -89,6 +89,9 @@ class Criterion(BaseModel):
     value: float | None = None
     value_high: float | None = None
     unit: str | None = None
+    max_age_days: int | None = Field(
+        default=None, ge=0, description="Protocol measurement window; None uses the configured demo fallback"
+    )
     terms: list[str] = Field(default_factory=list, description="Synonyms and codes useful to find evidence")
 
 

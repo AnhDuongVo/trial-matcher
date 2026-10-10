@@ -1,11 +1,12 @@
 """Deterministic checks: numbers and demographics are decided by code, not by the LLM.
 
 Rules cover age, sex, pregnancy for male patients and lab thresholds (with a recency window and unit
-check). Anything a rule cannot decide confidently returns None and goes to the LLM.
+check). Unsupported quantitative criteria return unknown for human review; qualitative criteria may use the LLM.
 """
 
 from __future__ import annotations
 
+import math
 import re
 
 from .fhir_facts import to_date
@@ -40,7 +41,17 @@ def _norm_unit(u: str | None) -> str:
 
 
 def find_lab(pf: PatientFacts, crit: Criterion) -> Fact | None:
-    observations = [f for f in pf.facts if f.kind == "observation" and f.value is not None]
+    observations = sorted(
+        [
+            f
+            for f in pf.facts
+            if f.kind == "observation"
+            and f.value is not None
+            and f.status not in {"entered-in-error", "cancelled", "preliminary", "registered", "unknown", "conflicting"}
+        ],
+        key=lambda f: f.date or "",
+        reverse=True,
+    )
     if crit.loinc:
         hit = next((f for f in observations if f.code == crit.loinc), None)
         if hit:
@@ -80,9 +91,16 @@ def apply_rules(crit: Criterion, pf: PatientFacts, max_lab_age_days: int = 365) 
             method="rule",
         )
 
+    if _COMPOUND.search(re.sub(r"between\s+\S+\s+and\s+\S+", " ", crit.text, flags=re.I)) and (
+        crit.category in {"age", "lab"} or crit.value is not None
+    ):
+        return result(
+            "unknown", 0.0, [], "Compound quantitative criterion requires explicit rule decomposition and review"
+        )
+
     if crit.category == "age" and (crit.age_min is not None or crit.age_max is not None):
         if pf.age_years is None:
-            return None
+            return result("unknown", 0.0, [], "Age unavailable")
         ok = (crit.age_min is None or pf.age_years >= crit.age_min) and (
             crit.age_max is None or pf.age_years <= crit.age_max
         )
@@ -105,30 +123,45 @@ def apply_rules(crit: Criterion, pf: PatientFacts, max_lab_age_days: int = 365) 
             "male patient: pregnancy criterion " + ("does not apply" if crit.kind == "exclusion" else "not applicable"),
         )
 
-    if crit.category == "lab" and crit.comparator and crit.value is not None:
+    if crit.category == "lab":
+        if (
+            not crit.comparator
+            or crit.value is None
+            or not math.isfinite(crit.value)
+            or (crit.value_high is not None and not math.isfinite(crit.value_high))
+        ):
+            return result("unknown", 0.0, [], "Unparsed quantitative threshold requires review")
         # Compound logic ("creatinine > 1.5 or eGFR < 30") goes to the LLM; "between x and y" is fine.
         if _COMPOUND.search(re.sub(r"between\s+\S+\s+and\s+\S+", " ", crit.text, flags=re.I)):
-            return None
+            return result("unknown", 0.0, [], "Compound lab criterion requires review")
         fact = find_lab(pf, crit)
         if fact is None or fact.value is None:
-            return None  # LLM decides; usually "unknown: no measurement in the record"
-        if crit.unit and fact.unit and _norm_unit(crit.unit) != _norm_unit(fact.unit):
-            return None  # units differ (e.g. mmol/mol vs %): let the LLM reason, or a human convert
+            return result("unknown", 0.0, [], "No valid measurement in the record")
+        if not math.isfinite(fact.value):
+            return result("unknown", 0.0, [fact], "Measurement is not finite")
+        if not crit.unit or not fact.unit or _norm_unit(crit.unit) != _norm_unit(fact.unit):
+            return result(
+                "unknown", 0.0, [fact], "Missing or incompatible units; explicit conversion and review required"
+            )
         measured = to_date(fact.date)
-        if measured is None:
-            return None  # no usable date: cannot judge recency
-        age_days = (to_date(pf.as_of) - measured).days
-        if age_days > max_lab_age_days:
+        as_of = to_date(pf.as_of)
+        if measured is None or as_of is None or len(fact.date or "") < 10:
+            return result("unknown", 0.0, [fact], "Missing or imprecise measurement date")
+        age_days = (as_of - measured).days
+        if age_days < 0:
+            return result("unknown", 0.0, [fact], "Measurement date is in the future")
+        window = crit.max_age_days if crit.max_age_days is not None else max_lab_age_days
+        if age_days > window:
             return result(
                 "unknown",
                 0.7,
                 [fact],
                 f"latest {fact.text} ({fact.value:g} {fact.unit or ''}) is from {fact.date}, "
-                f"older than {max_lab_age_days} days: needs a current value",
+                f"older than {window} days: needs a current value",
             )
         decided = _decide(fact.value, crit)
         if decided is None:
-            return None
+            return result("unknown", 0.0, [fact], "Unsupported comparator or incomplete bounds")
         return result(
             "met" if decided else "not_met",
             0.95,
@@ -136,4 +169,8 @@ def apply_rules(crit: Criterion, pf: PatientFacts, max_lab_age_days: int = 365) 
             f"{fact.text} = {fact.value:g} {fact.unit or ''} on {fact.date} vs {crit.comparator} "
             f"{crit.value:g}{'' if crit.value_high is None else f'-{crit.value_high:g}'}",
         )
+    if crit.value is not None or re.search(
+        r"(?:[<>]=?\s*\d|\d+(?:[.]\d+)?\s*(?:mg|g|mcg|ml|units?|days?|weeks?|months?|years?|%)\b)", crit.text, re.I
+    ):
+        return result("unknown", 0.0, [], "Quantitative criterion not covered by a deterministic rule; review required")
     return None
