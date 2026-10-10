@@ -63,9 +63,7 @@ flowchart LR
     V --> Agg[Conservative verdict] --> H{{Coordinator review<br/>override any criterion}} --> RS[FHIR ResearchSubject]
 ```
 
-## Demo
-
-![trial-matcher demo](docs/demo.gif)
+## Demo details
 
 The edited walkthrough shows one synthetic patient: eGFR stays unknown until a value is supplied, then the simple threshold is met. This is a simplified scalar illustration rather than FHIR or model execution. The video is on [anhduongvo.github.io](https://anhduongvo.github.io/projects/clinical-agentic-ai/).
 
