@@ -1,5 +1,13 @@
 # trial-matcher
 
+## Motivation
+
+Trial pre-screening requires comparing a patient record with many eligibility criteria. Missing laboratory results, stale measurements and complex criteria can make a confident yes-or-no answer misleading.
+
+## What the program does
+
+trial-matcher compares a patient’s FHIR record with a ClinicalTrials.gov study and produces an evidence-linked status for each criterion: met, not met or unknown. It applies deterministic rules to supported criteria and leaves unsupported quantitative criteria for review. A study coordinator reviews the proposed result before a candidate status can be changed. The project supports pre-screening rather than making enrollment decisions.
+
 ## What this project demonstrates
 
 Demonstrates FHIR trial pre-screening, deterministic simple rules and explicit abstention. Confidence scores are uncalibrated heuristics.
