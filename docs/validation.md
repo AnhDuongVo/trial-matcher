@@ -41,3 +41,12 @@ Two legacy verdicts now become `needs_review`: unsupported dose/duration and com
 ## Re-review follow-up, 10 October 2026
 
 Regression coverage now includes ordinary age/laboratory comparative phrases and true compound clauses; 31 tests passed locally.
+
+
+## Workflow recording — 13 October 2026
+
+The recording runs this repository’s FHIR extraction → criterion assessment → coordinator review → FHIR export workflow. A bundled synthetic FHIR patient and trial are used. Criterion parsing and qualitative model assessments are scripted; age/lab rules, evidence references, conservative aggregation and the review interrupt run in the actual code. The demo inspects the latest HbA1c evidence, then records a synthetic coordinator override for insulin and shows the resulting ineligible ResearchSubject. No live trial retrieval, model generation or patient contact occurs.
+
+The added optional Streamlit AppTest executes the repository pipeline and verifies the resulting output and review behavior. Install `.[demo,dev]` to include it. This does not validate hosted/self-hosted endpoints or domain correctness.
+
+Validation for this change: full local suite **32 passed**. Ruff checks passed for the interface, fixtures and added regression test. MP4 decoding passed without errors. No live endpoint or domain validation was performed.

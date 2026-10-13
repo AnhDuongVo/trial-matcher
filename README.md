@@ -16,7 +16,7 @@ Demonstrates FHIR trial pre-screening, deterministic simple rules and explicit a
 
 ![Demo](docs/demo.gif)
 
-[Portfolio videos](https://anhduongvo.github.io/projects/clinical-agentic-ai/). Clinical recordings use the separate simplified interactive demo.
+[Portfolio videos](https://anhduongvo.github.io/projects/clinical-agentic-ai/). This recording runs the repository workflow interface with explicitly labeled offline fixtures.
 
 ## Try it offline
 
@@ -73,7 +73,16 @@ flowchart LR
 
 ## Demo details
 
-The edited walkthrough shows one synthetic patient: eGFR stays unknown until a value is supplied, then the simple threshold is met. This is a simplified scalar illustration rather than FHIR or model execution. The video is on [anhduongvo.github.io](https://anhduongvo.github.io/projects/clinical-agentic-ai/).
+The recording runs this repository’s FHIR extraction → criterion assessment → coordinator review → FHIR export workflow. A bundled synthetic FHIR patient and trial are used. Criterion parsing and qualitative model assessments are scripted; age/lab rules, evidence references, conservative aggregation and the review interrupt run in the actual code. The demo inspects the latest HbA1c evidence, then records a synthetic coordinator override for insulin and shows the resulting ineligible ResearchSubject. No live trial retrieval, model generation or patient contact occurs.
+
+Run the same interface without credentials:
+
+```bash
+python -m pip install -e ".[demo]"
+streamlit run examples/workflow.py --theme.base light
+```
+
+For the interface regression check, install `.[demo,dev]` and run `pytest -q`. Previous media are preserved in `old-videos/2026-10-13-before-workflows/`.
 
 ## Design decisions
 
